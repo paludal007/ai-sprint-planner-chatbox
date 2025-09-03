@@ -1,0 +1,20 @@
+{
+  "name": "csv-priority-estimator",
+  "version": "1.0.0",
+  "description": "Upload CSV (Summary, Description) and predict Priority, Story Points, Estimate Hours.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "csv-parse": "^5.5.3",
+    "express": "^4.19.2",
+    "json2csv": "^6.0.0-alpha.2",
+    "multer": "^1.4.5-lts.1",
+    "natural": "^6.10.4"
+  }
+}

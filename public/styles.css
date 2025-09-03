@@ -1,0 +1,179 @@
+/* 🌈 Light animated gradient background */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(-45deg, #fdfbfb, #ebedee, #e0f7fa, #f1f8e9);
+  background-size: 400% 400%;
+  animation: gradientMove 18s ease infinite;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🌟 Gradient animated title */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #6a11cb, #2575fc, #00c6ff, #7ee8fa);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 6s infinite alternate;
+  text-align: center;
+  margin-bottom: 8px;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Subtitle */
+.subtitle {
+  text-align: center;
+  color: rgba(50,50,50,0.8);
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+/* ✨ Glassmorphic card */
+.glass-card {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 25px auto;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(200, 200, 200, 0.4);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Card headers */
+.glass-card h4 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Base button style */
+.btn-gradient {
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
+
+/* Individual gradients */
+#uploadBtn {
+  background: linear-gradient(90deg, #4facfe, #00f2fe);
+}
+
+#clearBtn {
+  background: linear-gradient(90deg, #f5576c, #f093fb);
+}
+
+#downloadBtn {
+  background: linear-gradient(90deg, #43e97b, #38f9d7);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  .glass-card {
+    padding: 18px;
+  }
+}
+
+/* Predictions Table - Glassmorphic look */
+.table.glass-table {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 200, 200, 0.4);
+  color: #333;
+}
+
+/* Table header */
+.table.glass-table thead {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Table rows */
+.table.glass-table tbody tr {
+  transition: background 0.2s ease;
+}
+.table.glass-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Priority highlighting */
+.table.glass-table td.priority-critical {
+  color: #d32f2f;
+  font-weight: 700;
+}
+.table.glass-table td.priority-high {
+  color: #f57c00;
+  font-weight: 700;
+}
+.table.glass-table td.priority-medium {
+  color: #1976d2;
+  font-weight: 700;
+}
+.table.glass-table td.priority-low {
+  color: #388e3c;
+  font-weight: 700;
+}
+
+
+
+/* Priority text styles */
+.priority-critical {
+  color: #dc3545 !important;
+  font-weight: 700;
+}
+
+.priority-high {
+  color: #fd7e14 !important;
+  font-weight: 700;
+}
+
+.priority-medium {
+  color: #ffc107 !important;
+  font-weight: 700;
+}
+
+.priority-low {
+  color: #28a745 !important;
+  font-weight: 700;
+}

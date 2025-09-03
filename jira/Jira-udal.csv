@@ -1,0 +1,1468 @@
+summary,description
+Simulate Replication lag to analyse the impact during disk downsizing activity,"* *Simulate lag through high write load:*
+We’ll intentionally generate a high volume of write traffic to create replication lag.
+* *Introduce network latency:*
+Secondaries will be migrated to the NV region to induce slower replication due to network latency.
+* *Timing coordination:*
+High volume writes will begin once the disk downscaling activity is initiated.
+* *Verification:*
+Verify that no order transitions to the *pending dispatch* state multiple times during the downscale process.
+
+
+[~accountid:62e7989bec6b328032f0a332] , -we need at least 300GB of data in perf before starting this downscale activity.,- 
+We’ll test with a lower tier to induce replication lag.
+"
+Update Performance Portal,"# Lambda Env Variable (*apiAuthorizerPerformance, api-authorizer-perf*)
+# TD comparison on portal with sandbox/qa to perf
+# Load Shift View/Edit for performance on Oregon and N.V"
+Performance test for custom tier based rates when opting for drivingDistance based rates calculation,
+Performance testing for workflow-builder Ms,"As now workflow is being a bit stable, we need to do a Perf testing for workflow-builder.
+
+Dev Url - [https://dev.workflows-builder.lynkup.com/|https://dev.workflows-builder.lynkup.com/] 
+
+Sprint sandbox date is 21st Jul
+
+*Objective:* To achieve and understand performance parameters for workflow-builder.
+
+Note: workflow-builder is already made to Prod as this was internal application and not public facing.
+
+
+
+Reach out to [~accountid:5f4ddee0333edb00432ffff9] [~accountid:712020:18d4d68c-62cd-4023-8374-42f9982cbfd4] [~accountid:712020:b01040ae-15ec-4a86-adab-f392074fbc58] for any query."
+Add new flavours to generic and endurance test,
+Endurance Test - JUNE-25,
+Performance test for Shipping fee calculation API,
+POC ECS Task Placement Update,"Source: [~accountid:712020:b28dc6ea-8f7b-4903-a072-4ae6e3178197] 
+
+_New AWS Notification – ECS Task Placement Update_
+AWS has rolled out a new feature related to ECS task placement. Check out the details below.
+Let’s assess if this could be more efficient than our current strategy, especially since it’s managed by AWS without us needing to configure it manually.
+
+{noformat}There is an upcoming change to Amazon Elastic Container Service (ECS) that enhances how ECS services maintain high availability across Availability Zones (AZs).
+Effective June 30, 2025, Availability Zone (AZ) rebalancing will be enabled by default for all newly created ECS services that are compatible with the feature.
+
+What is AZ Rebalancing?
+AZ rebalancing helps improve application availability by automatically monitoring and distributing ECS tasks evenly across Availability Zones. When ECS detects an imbalanced task distribution across AZs, it will proactively launch tasks in the AZs with the fewest tasks and terminate excess tasks in the AZs with the most tasks.
+
+What is Changing?
+Starting June 30, 2025, ECS will default enableAvailabilityZoneRebalancing to true for all new ECS Services that are compatible with the feature.
+Existing services (created before June 30, 2025) will not be affected by this change.
+Services that are not compatible — such as those using the binpack placement strategy — will default to false to ensure backward compatibility.
+
+Important Considerations:
+1. AZ rebalancing may involve stopping and starting tasks as part of the rebalancing process. 
+2. If you have workloads that are sensitive to task termination or require strict control over task placement, you may want to opt out by setting enableAvailabilityZoneRebalancing to false when creating new services.
+3. To enable AZ rebalancing on existing compatible services, update Service and set enableAvailabilityZoneRebalancing to true.
+4. We encourage you to review your ECS service configurations to determine compatibility and decide if any changes are needed for your specific workloads.{noformat}"
+Performance test for DL-53137,Performance test for DL-9064 and DL-53137
+Evaluate App Stability with Targeted 3000 IOPS Before Disk Downsizing,"*Objective: Scale down deliverysolutions-prod disk size from 3 TB to 500GB*
+Max Disk IOPS captures short bursts (e.g., up to 19,000 write IOPS), while Disk IOPS (average) reflects sustained usage (around 820 write / 250 read IOPS). Since the sustained IOPS are well below the 3000 IOPS baseline available at 500 GB, downsizing disk space should not negatively impact performance.
+
+*Action Item:*
+Perform a current prod load matching test of the application with targeted IOPS (3000 baseline) to validate stability and measure impact.
+
+
+
+!image-20250702-072605.png|width=1884,height=804,alt=""image-20250702-072605.png""!"
+Perf test for https bound request,As we are implement persistent connection support by introducing a {{keepAliveHttpsAgent}} to reuse secure sockets for outbound HTTPS requests. we’ll need to compare performance before and after our changes. More details can be find on parent card
+Performance test for DL-9064 ,Performance test for DL-9064
+Mismatch of Jenkins deployment pipeline on the performance portal,"There is a mismatch in the Jenkins deployment pipeline on the performance portal
+
+{noformat}@jenkins.deliverysolutions.co/view/Performance%20Cluster%20Deployment/job/performance-pipeline-type-da/buildWithParameters?token=trinitrotoluene&environmentOverrides=[{""key"":""NEW_RELIC_APP_NAME"",""value"":""PERFORMANCE_DELIVERY_ASSURANCE"",""_id"":""66a79edf2bfc6cc66f76a0e6""},{""key"":""DB_URL"",""value"":""mongodb%2Bsrv://XXXX:XXXX@perf.qwvpp.mongodb.net/<db_name>?retryWrites=true%26w=majority%26maxPoolSize=10%26appName=Deliveryassurance"",""_id"":""66a79edf2bfc6cc66f76a0e7""},{""key"":""REDIS_URL"",""value"":""redis://perf-api-cache-encrypted.yryf11.ng.0001.usw2.cache.amazonaws.com:6379"",""_id"":""66a79edf2bfc6cc66f76a0e8""},{""key"":""NODE_ENV"",""value"":""qa"",""_id"":""66a79edf2bfc6cc66f76a0e9""},{""key"":""LOG_DB_URL"",""value"":""mongodb%2Bsrv://XXXX:XXXX@dev-log-cluster.qwvpp.mongodb.net/<db_name>?retryWrites=true%26w=majority%26maxPoolSize=10%26appName=Deliveryassurance"",""_id"":""66a79edf2bfc6cc66f76a0ea""},{""key"":""STOP_SAVING_METERING_IN_OLD_DB"",""value"":""true"",""_id"":""66a79edf2bfc6cc66f76a0eb""}]&taskDefinitionName=delivery-assurance-perf-nlb&serviceNameMapping=common-delivery-assurance-qa&referenceEnvironment=qa&branch=S2024-DM-84.0.0&repository=delivery-assurance&serviceName=delivery-assurance-perf&region=us-west-2&ecsClusterName=delivery-assurance-perf&ecsServiceName=delivery-assurance-perf{noformat}
+
+!Screenshot 2025-04-26 at 1.06.13 PM.png|width=1440,height=900,alt=""Screenshot 2025-04-26 at 1.06.13 PM.png""!
+
+Check for all active services from the performance portal if pipeline not exist than need to create pipeline for both the region
+
+As we have migrated our jenkins pipeline from {{https://jenkins.deliverysolutions.co/view/PERF/}}  to {{https://jenkins2.deliverysolutions.co/view/Performance%20Cluster%20Deployment/}}  so we need to update this in our performance backend"
+Analyse providers to array performance in provider service,"We have added hint to the providers to array query, although this hasn’t improved our performance as seen in our tests. We need to look into it again and see what can be done."
+Performance results after implementation of hint index for fetching providers,Source: [~accountid:5ee75f40e145af0ab47dacb8] / [~accountid:5de9d451be6c1f0d0720c76c] 
+"performance test on providers Rodie, FedEX - DL-38132",//to be added by [~accountid:63329316748d1bfcb859470f] 
+[Perf] check the performance for new flow for sending returns and orders notifications,"[https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/1085669708/Entity+Driven+-+Workflow+Communications|https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/1085669708/Entity+Driven+-+Workflow+Communications|smart-link] 
+
+Added link for new architecture for sending notifications.
+
+As part of [https://delivery-solutions.atlassian.net/browse/DL-50960|https://delivery-solutions.atlassian.net/browse/DL-50960|smart-link], we have created new single flow for sending both order/ returns notifications. 
+
+We have removed the filtering for status update events from api MS and all events will now be pushed in messaging service. 
+This new flow created in messaging service is responsible to send all types of triggered notifications - 
+1. Immediate
+2. Send if 
+3. Scheduled
+
+Returns and order notifications will be moved in new collection → communications
+And their respective templates will be added in new collection → communicationTemplates
+
+All the event related info and enrichment related info is stored in qa-lma-master → 
+entityEvents and entityTriggers collection
+
+For the flow execution, we will be querying both entityEvents and entityTriggers collection for every event and then we will be fetching the respective communications related to that event. 
+
+Check if the indexing is correct for these collections- 
+entityEvents
+entityTriggers
+communications
+communicationTemplates
+
+And also check the performance of this new execution. 
+
+Note ⚠️ :
+
+We have added checks in api, returns and cron service, so as to test this new flow only for specific tenants. Inform the tenants we need to do performance testing in, and we will run migration to move these data in new collections. 
+Connect with [~accountid:5cebd260f34cf30f24aad116] / [~accountid:712020:cf58f07f-3f46-4ec5-a09a-74aea6f1fc2e] for any doubts. 
+
+"
+Sephora Spring Sale Prep,"!image-20250325-103719.png|width=1870,height=1132,alt=""image-20250325-103719.png""!"
+Performance test for rates upload,
+Performance test for the packing slip/return request endpoint ,"We have introduced an endpoint that we use to generate the packing slip.
+
+Perform the perf and load/stress test on the {{/packing-slip}} endpoint introduced in the label service
+
+Resource name - {{/api/v3/packing-slip?tenantId=${tenantId}&token=${jwtToken}}}
+
+to generate jwt token we will need secret key.
+
+The secret key to be used for the non-prod environment.  {{XT6PRpRuehFsyMa2}}
+
+Prod env secret key {{dRC3xTYd3v02Rn}}
+
+Additionally this endpoint will be generated in the return request. So, we will also need to perform a performance check for the return request api."
+Performance test for Cubic Feet Tier rates,
+Performance Test for Lynkup APIs,"Performance (Stress) Testing for Cloud hosted applications
+Application:
+NOTE: This should be listed on a transaction-by-transaction basis. For example, running multiple
+transactions (i.e. login, execute a search, submit a form, etc.) metrics need to be captured for each.
+
+Non-Peak testing: # of current users/ 5 years out
+Peak testing; # of expected users/ 5 years out
+Response times (SLA met?)
+Lowest
+AVG
+Highest
+Error rate:
+Requests per second/ minute/ hour:
+Stress parameter used was X% over anticipated Peak volume:
+
+Environment (server and network):
+Application server CPU utilization:
+Application server Memory utilization:
+Database server CPU utilization:
+Database server Memory utilization:
+Network utilization (throughput):
+
+Duration of testing:
+Tool used (Jmeter, Gatling, LoadRunner, Other (specify)"
+[Perf] Check the impact of adding rule-engine component in send email / sms flow,
+Performance of all APIs - Aug 2025,
+Performance benchmarking for Client Facing APIs - Aug 2025,
+Performance of all APIs - July 2025,
+Performance benchmarking for Client Facing APIs - July 2025,
+Performance of all APIs - JUNE 2025,
+Performance benchmarking for Client Facing APIs - JUNE 2025,
+Performance of all APIs (For Sandbox S2025-IAF-110.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2025-IAF-110.0.0),
+Performance test for Label Service,
+Endurance Test - March-25,
+Endurance Test - FEB-25,
+Endurance Test - JAN-25,
+Performance analysis on placement strategy on ECS services in Common clusters,
+Performance test for TNT days uploads to postal code zones table,
+Performance of all APIs (For Sandbox S2025-OP-109.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2025-OP-109.0.0),
+Performance of all APIs (For Sandbox S2025-PP-108.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2025-PP-108.0.0),
+Performance of all APIs (For Sandbox S2025-DM-107.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2025-DM-107.0.0),
+Performance Test For OrderEstimate entries Back in Rate Service,"[https://delivery-solutions.atlassian.net/browse/DL-47701|https://delivery-solutions.atlassian.net/browse/DL-47701|smart-link] 
+
+Execute Order Estimates and Rate Services to validate Response."
+Performance of all APIs (For Sandbox S2025-IAF-106.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2025-IAF-106.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-104.0.0),
+Performance of all APIs (For Sandbox S2024-PP-104.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-103.0.0),
+Performance of all APIs (For Sandbox S2024-DM-103.0.0),
+Performance test for zone files upload per tenant,
+Record and Analyze Customer Traffic During Peak Holiday Season - Jan '25,
+Record and Analyze Customer Traffic During Peak Holiday Season - December '24,
+Performance test of Micro-frontends,"* As we have shifted to a Micro-frontends architecture pattern in our portal, we need to access and understand what is the performance impact(before & after) for the portal pages. 
+* Now that the modules are being fetched and loaded from a separate CloudFront endpoint, its obvious that we will see some hit on the initial page loading time.
+* We need to understand by how much is the rise in this page loading time
+* We need to check the load times with and without caching -
+**  When we load the portal for the first time, CORS calls + remote modules will be fetched
+**  When the portal is already loaded and modules have been cached
+* Check the load time metrics like - LCP, Speed Index, Total blocking time, etc and prepare a comparison report
+* Refer to these 2 docs to understand how we can do FE performance analysis -
+** [https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/810287240/Frontend+Performance+Metrics|https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/810287240/Frontend+Performance+Metrics|smart-link] 
+** [https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/811040966/Frontend+Performance+Tools|https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/811040966/Frontend+Performance+Tools|smart-link] "
+3rd iteration: Inhouse ETA ETD performance testing,"Following the updates from AIML team under [https://delivery-solutions.atlassian.net/browse/DL-49334|https://delivery-solutions.atlassian.net/browse/DL-49334|smart-link] & the general traffic of 5k records on perforamance server itself under this task’s subtask ([49368|https://delivery-solutions.atlassian.net/browse/DL-49368]), perfrom the testing using Jmeter."
+Add Curbside to Generic Tests,"We should add curbside to the list of generic tests. I am seeing 150 RPM for location checks during few hours in the day. Wakefern is creating around 2 lakh orders a month
+
+_Issue created in Slack from a_ [_message_|https://delivery-solutions.slack.com/archives/C041BC3JLJJ/p1732001954991479?thread_ts=1732001954.991479&cid=C041BC3JLJJ]_._
+
+
+
+!image-20241126-164421.png|width=2214,height=304,alt=""image-20241126-164421.png""!"
+add curbside order type flavour in generic suite,
+Performance Test For Pickup Service,"Performance Test for the new pickup service
+
+|/locations|"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-102.0.0),
+Performance of all APIs (For Sandbox S2024-IA-102.0.0),
+Updated inhouse-eta-etd performance testing,"+*Description:*+
+
+With updated new relic distributed tracing (able to see child functions) & also having newrelic header as an request field in itself (which can be leveraged in individual tracking of modules), we perform another round of inhouse-eta-etd testing with correct compute instance types. 
+
+
+
++*Screenshots:*+ 
+
+!image (1).png|width=2836,height=1502,alt=""image (1).png""!
+
++*Desired outputs:*+ 
+
+We choose to have P95 & TPM as per the estimate service. 
+
++*Next steps:*+
+
+# Further subtasks to be created upon discussion with perf team. "
+Need infra recommendation for prod services,"The infra recommendation needed for below services . 
+[https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit?usp=sharing|https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit?usp=sharing|smart-link] 
+
+|| || ||
+|[+claims-prod+|https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/common-prod/services/claims-prod/health?region=us-west-2]|Common-prod|
+|[+drivers-service-prod-nlb+|https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/common-prod/services/drivers-service-prod-nlb/health?region=us-west-2]|Common-prod|
+|[+label-service-prod+|https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/common-prod/services/label-service-prod/health?region=us-west-2]|Common-prod|
+|[+place-order-async-prod+|https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/common-prod/services/place-order-async-prod/health?region=us-west-2]|Common-prod|
+|[+providers-service-prod+|https://us-west-2.console.aws.amazon.com/ecs/v2/clusters/common-prod/services/providers-service-prod/health?region=us-west-2]|Common-prod|
+|onboarding-service-prod|onboarding-service-prod|
+|transformer-prod-nlb|transformer-prod-nlb|
+|streaming-service|streaming-service-PROD|
+|returns-prod|returns-prod|
+|fleet-routing-prod|fleet-routing-prod|"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-101.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-99.0.0),
+Performance test for : DL-46826,"PR -  [https://bitbucket.org/deliverysolutions/onboarding-service/pull-requests/281/overview|https://bitbucket.org/deliverysolutions/onboarding-service/pull-requests/281/overview|smart-link] 
+
+Performance test for Onboarding MS (DAP) Node upgrade : [https://delivery-solutions.atlassian.net/browse/DL-46826|https://delivery-solutions.atlassian.net/browse/DL-46826|smart-link].
+
+
+
+# We have update node version to - 20.17.0
+# We updated all packages & dependencies to latest version
+# Update docker file - 
+{noformat}FROM node:14.21.3 to node:20.17.0-slim{noformat}
+# module system update 
+{noformat}""module"": ""commonjs"" to - ""module"": ""NodeNext"",{noformat}"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-100.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-99.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-OR-97.0.0 ),
+Performance test for Shipping files upload in API,
+Record and Analyze Customer Traffic During Peak Holiday Season - November '24,We have to prepare a document/ google sheet which records the regular traffic of each tenant and the peak traffic they sent during the holiday season for every flavour/ api. This will help us to strategise our flavours accordingly and thus we can be ready for next holiday season.
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IAF-96.0.0),
+DA Performance Test at 10X,
+Create Webhook Uber Orders for Generic Test in QA Environment,
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-95.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-93.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-92.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-91.0.0),
+DA performance test,"* Check for DB connection latency
+* Check impact for cold start of the authorizer lambda 
+* Benchmark the authorizer latency
+* Check for sudden spike of 10X
+*  Verify UPS use case"
+Performance test for API MS Node upgrade DL-23944 & DL-2494,
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-94.0.0),
+Inhouse ETA ETD performance testing,"Based on the present (3rd Sept 2024) in-house ETA ETD solution ( having fastapi background container on non prod instance - [https://delivery-solutions.atlassian.net/browse/DL-45316|https://delivery-solutions.atlassian.net/browse/DL-45316|smart-link] ), we want to understand the performance of this app. 
+
+explanation of request bodies : [https://delivery-solutions.atlassian.net/browse/DL-45170|https://delivery-solutions.atlassian.net/browse/DL-45170|smart-link] 
+
+* Sagemaker multi model endpoint → to be confirmed with AIML team. 
+
+----
+
+Steps to do : 
+
+# Capture all required Dockerfile, container information to replicate for a company wide API. 
+## Have an API listening to this app. (To be developed as created in Cognida case). 
+## [https://delivery-solutions.atlassian.net/browse/DL-45361|https://delivery-solutions.atlassian.net/browse/DL-45361|smart-link] 
+# Generate the below set of data requests 
+## ASAP request 
+## Partial schedule request
+## Complete schedule request 
+
+----
+
+Sample request body : 
+
+{noformat}{
+  ""requests"": [
+    {
+      ""ORDER_ID"" : ""ghi"",
+      ""PROVIDERS"": [""Onfleet""],
+      ""TENANTID"": ""strack_and_van_til"",
+      ""PICKUPADDRESS_ZIPCODE"": ""46368"",
+      ""PICKUPADDRESS_COUNTRY"": ""US"",
+      ""PICKUPADDRESS_STATE"": ""IN"",
+      ""PICKUPADDRESS_CITY"": ""Portage"",
+      ""DELIVERYADDRESS_COUNTRY"": ""US"",
+      ""DELIVERY_DISTANCE"": 1.25,
+      ""DISPATCH_TIME"" : 1721872700000   
+    },
+    {
+      ""ORDER_ID"" : ""abc"",
+      ""PROVIDERS"": [""Uber""],
+      ""TENANTID"": ""strack_and_van_til"",
+      ""PICKUPADDRESS_ZIPCODE"": ""46368"",
+      ""PICKUPADDRESS_COUNTRY"": ""US"",
+      ""PICKUPADDRESS_STATE"": ""IN"",
+      ""PICKUPADDRESS_CITY"": ""Portage"",
+      ""DELIVERYADDRESS_COUNTRY"": ""US"",
+      ""DROPOFFTIMEENDSAT"": 1721872800000,
+      ""DELIVERY_DISTANCE"": 1.25,
+      ""DISPATCH_TIME"" : 1721872700000
+    },
+    {
+      ""ORDER_ID"" : ""def"",
+      ""PROVIDERS"": [""Roadie""],
+      ""TENANTID"": ""TotalWine"",
+      ""PICKUPADDRESS_ZIPCODE"": ""12345"",
+      ""PICKUPADDRESS_COUNTRY"": ""US"",
+      ""PICKUPADDRESS_STATE"": ""NY"",
+      ""PICKUPADDRESS_CITY"": ""NY"",
+      ""DELIVERYADDRESS_COUNTRY"": ""US"",
+      ""DROPOFFTIMESTARTSAT"": 1721872700000,
+      ""DROPOFFTIMEENDSAT"": 1721872800000,
+      ""DELIVERY_DISTANCE"": 10
+    }
+  ]
+}{noformat}"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-90.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-89.0.0),
+To find Wakefern DA/Place Order TPS,"We have found Capstone do have some rate limits on their end in Prod as 300 per minute and so we have asked them to increase it.
+
+For that we need to come up with load we are currently having in Milezero and as of now Wakefern V8 is the one who was actively using it.
+
+
+
+Can you get this at the earliest?"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-98.0.0),
+Restructure the JMX scripts according to the new folder structure,We need to implement this folder structure in the load-scripts repo to better manage our JMeter scripts - [https://delivery-solutions.atlassian.net/browse/DL-30947?focusedCommentId=72425|https://delivery-solutions.atlassian.net/browse/DL-30947?focusedCommentId=72425|smart-link] 
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-88.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-87.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-86.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-85.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-84.0.0),
+Add PO -> provider service flavour in Generic V2,"# Under the same tenant that is used in generic, add a new provider instance of Roadie named - {{Roadie - Provider MS}}
+# Add a new store and assign above created DSP
+# Make sure {{providerMsRouteFlag}} flag is true for this provider
+# Check the PO flow in QA. Provider service should be involved in the PO call"
+Update the scaling numbers to the performance portal,"# update scaling numbers for 1x, 5x, 10x, 25x, PET, Endurance"
+Check the task definition section in the performance portal,all task Definitions should be updated in the mentioned clusters.
+Traffic Audit for Holiday Season,
+Performance Testing for Patch /v2/routes/{{routeId}} API,"API is going through some changes which can lead to performance impact.
+
+API Curl
+
+{noformat}curl --location --request PATCH 'https://sandbox.portal-api.deliverysolutions.co/api/v2/routes/300624-1-1719730084184' \
+--header 'x-api-key: SNvnkYLPhhi6LnBuRfO9+g==' \
+--header 'tenantId: manshi_four' \
+--header 'Content-Type: application/json' \
+--data '{
+    ""orders"": [
+        {
+            ""orderId"": ""6680ff91a3e35e2321c7986a"",
+            ""batchSequence"": 1
+        },
+        {
+            ""orderId"": ""6680ff93a3e35e2321c79885"",
+            ""batchSequence"": 2
+        }
+
+    ]
+}'{noformat}"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-83.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-81.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-80.0.0),
+Performance test of AWS services in Order Resource related service,"Performance test of AWS services in Order Resource related service
+
+We might have concerns with respect to issues/timeout while uploading labels/attachments/short urls or publishing SQS or SNS data at high throughput.
+
+Need to run our performance suite to evaluate that all the aws services are working as expected.
+
+Add error logs if they are not already logged in our source code, run our performance suite, enable logging in performance environment, ensure you enable error logging only in performance environment to monitor that there are no AWS related failures logged in our performance tests."
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-79.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-78.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-77.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-76.0.0),
+Application endpoint on a VM/serverless exposing cleartext cloud keys,"||Issue||Ticket||Subscription||Status||Created|| || ||
+|perf-stack-manager-dev-service
+Lambda Function|-|Last Mile
+us-west-2|Open|Apr 3, 2024, 5:5| | |
+
+We need to find where this key is used in the application. This key is long deprecated. So is it legacy implementation that is deployed? We should remove this key from the application
+
+!Screenshot 2024-06-07 at 1.41.48 PM.png|width=406,height=416,alt=""Screenshot 2024-06-07 at 1.41.48 PM.png""!"
+Calibration of API-CRON to handle 5X traffic spike ,"A P1 was observed in production where API-CRON had a memory spike
+
+!image-20240530-060458.png|width=1324,height=719,alt=""image-20240530-060458.png""!
+
+!image-20240530-062430.png|width=1330,height=718,alt=""image-20240530-062430.png""!
+
+----
+
+I could see {{POST//uber/hooks/update-delivery-status}} had multiple timeouts. 
+
+!image-20240530-071512.png|width=1418,height=750,alt=""image-20240530-071512.png""!
+
+
+
+!image-20240530-072657.png|width=1404,height=742,alt=""image-20240530-072657.png""!"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-75.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-78.0.0),
+Revisit Endurance Test Setup - 2024,"# Fix locations documents
+# Make sure latest server types are used in the launch templates
+# Make sure the scaling policies are same as defined in [https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit#gid=0|https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit#gid=0|smart-link] (2023-24 sheet)"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-74.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-73.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-72.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-71.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-70.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-69.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-68.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-67.0.0),
+Performance Test for Live Webhooks,"There are changes in the way geofences were fetched earlier, for webhooks.
+
+The changes done have a performance impact.
+
+Please test live webhooks for geofences.
+
+----
+
+With this bug fix - [https://delivery-solutions.atlassian.net/browse/DL-34048|https://delivery-solutions.atlassian.net/browse/DL-34048|smart-link] , we have introduced {{cacheNotificationsAndAlerts}} function in lmahook.js > {{updateLiveOrder}} function.
+
+We need to only simulate a load of Iive webhooks for Delivery as well as Curbside orders. The goal is to observe the before-after difference in the live webhooks performance.
+
+* Review the code changes
+* Ensure, Geofece alerts and customer notifications for the status used in the DSP webhooks are enabled for that tenant
+* Delivery type orders setup - 
+** Order status that will be send through the webhook should be one of the live webhook statuses. Eg. if Roadie is used as DSP, the status in DSP webhooks should be either {{shipment.driver_assigned}} or {{shipment.pickup_confirmed}}
+** Use the same status for every DSP webhook call
+* For Curbside setup - 
+** Refer this tenant to QA for creating a Curbside order, else connect with [~accountid:712020:56855bd1-dd35-4898-9e41-5230da1a0d6a] to get the correct curbside order.
+** Order for reference - [https://qa.portal.deliverysolutions.co/#/deliveries/status/orders/order_details/6602a4858f349fb5ff421dc5|https://qa.portal.deliverysolutions.co/#/deliveries/status/orders/order_details/6602a4858f349fb5ff421dc5|smart-link] 
+** Curl that can be used for live status updates for Curbside orders - 
+{noformat}curl --location 'http://localhost:8000/hooks/proximity-service/update-delivery-status' \
+--header 'content-type: application/json' \
+--header 'cache-control: no-cache' \
+--header 'x-api-key: xG5QtBykvDgRQaNp8vToVQ==' \
+--data '	
+{
+    ""accuracy"": 2.8,
+    ""activity_confidence"": 100,
+    ""altitude"": 0,
+    ""altitude_accuracy"": -1,
+    ""battery_is_charging"": false,
+    ""battery_level"": 0.33,
+    ""companyId"": ""test_business_palash"",
+    ""company_token"": ""test_business_palash"",
+    ""created_at"": ""2024-03-15T12:40:39.897Z"",
+    ""device_id"": 410,
+    ""endLat"": 19.9768092,
+    ""endLong"": 73.8335294,
+    ""eta"": ""2024-03-15T12:55:04+00:00"",
+    ""event"": ""motionchange"",
+    ""extras"": {
+        ""endLat"": 19.9768092,
+        ""endLong"": 73.8335294,
+        ""journeyId"": ""bea46544-0998-4fac-83e4-7bebfc45a64e"",
+        ""orderId"": ""PushNotif190"",
+        ""useAuto"": true
+    },
+    ""heading"": 244.34,
+    ""heading_accuracy"": -1,
+    ""hereFlag"": true,
+    ""is_moving"": true,
+        ""latitude"":  19.9768965,
+        ""longitude"": 73.8324174,
+    ""odometer"": 41981.8,
+    ""orderId"": ""PushNotif190"",
+    ""order_id"": ""PushNotif190"",
+    ""order_status"": ""in_transit"",
+    ""recorded_at"": ""2024-03-15T12:40:39.122Z"",
+    ""speed"": 27.78,
+    ""speed_accuracy"": -1,
+    ""timestamp"": ""2024-03-15T12:40:39.122Z"",
+    ""uuid"": ""3d28ce48-1883-4dfe-9356-3a319a6db24d"",
+    ""isManual"": false
+}'{noformat}
+** This live webhook is called in proximity service flow"
+Performance testing on performance transformer service,"Post completing the linked card ([DL-34293|https://delivery-solutions.atlassian.net/browse/DL-34293]), we would like to have a performance testing done on the [http://transformer-service-dev.deliverysolutions-internal.co/predict/provider-assurance|http://transformer-service-dev.deliverysolutions-internal.co/predict/provider-assurance] link 
+
+Expectations : 
+
+* understand the TPS
+* understand average response time. (in per mins & per sec format)
+
+
+
+sample curl request 
+
+{noformat}curl --location 'http://transformer-service-dev.deliverysolutions-internal.co/predict/provider-assurance ' \
+--header 'tenantId: testingdeliverysolutions' \
+--header 'x-api-key: eGtuOktac7QjFHKuWUzU4A==' \
+--header 'Content-Type: application/json' \
+--header 'X-Amz-Content-Sha256: beaead3198f7da1e70d03ab969765e0821b24fc913697e929e726aeaebf0eba3' \
+--header 'X-Amz-Date: 20240320T134236Z' \
+--header 'Authorization: AWS4-HMAC-SHA256 Credential=AKIAXLUO2FUSYT3PMD6H/20240320/us-west-2/sagemaker/aws4_request, SignedHeaders=content-length;content-type;host;tenantid;x-amz-content-sha256;x-amz-date;x-api-key, Signature=064165d58e1f581dc289374267461cfbeedec81edd3ce37444eefa1c4a1c06bd' \
+--data '[
+    {
+        ""pickupAddress"": {
+            ""zipcode"": ""60445"",
+            ""latitude"": 41.65228,
+            ""longitude"": -87.7415368
+        },
+        ""deliveryAddress"": {
+            ""zipcode"": ""60527"",
+            ""latitude"": 41.7447,
+            ""longitude"": -87.9334
+        },
+        ""showProvidersConfidence"": true,
+        ""providers"": [
+            ""Roadie"",
+            ""DoorDash""
+        ]
+    },
+    {
+        ""pickupAddress"": {
+            ""zipcode"": ""40299"",
+            ""latitude"": 38.2215789,
+            ""longitude"": -85.5404399
+        },
+        ""deliveryAddress"": {
+            ""zipcode"": ""40299"",
+            ""latitude"": 38.1673072,
+            ""longitude"": -85.4994192
+        },
+        ""showProvidersConfidence"": true,
+        ""providers"": [
+            ""PickupNow"",
+            ""Roadie"",
+            ""DoorDash""
+        ]
+    },
+    {
+        ""pickupAddress"": {
+            ""zipcode"": ""55125"",
+            ""latitude"": 44.9393217,
+            ""longitude"": -92.93968149999999
+        },
+        ""deliveryAddress"": {
+            ""zipcode"": ""55075"",
+            ""latitude"": 44.8759802,
+            ""longitude"": -93.0275802
+        },
+        ""showProvidersConfidence"": true,
+        ""providers"": [
+            ""Shipt 2"",
+            ""Roadie"",
+            ""DoorDash""
+        ]
+    },
+    {
+        ""pickupAddress"": {
+            ""zipcode"": ""23666"",
+            ""latitude"": 37.0446924,
+            ""longitude"": -76.3859754
+        },
+        ""deliveryAddress"": {
+            ""zipcode"": ""23608"",
+            ""latitude"": 37.1526,
+            ""longitude"": -76.542
+        },
+        ""showProvidersConfidence"": true,
+        ""providers"": [
+            ""PickupNow"",
+            ""Roadie"",
+            ""DoorDash""
+        ]
+    },
+    {
+        ""pickupAddress"": {
+            ""zipcode"": ""99336"",
+            ""latitude"": 46.2196236,
+            ""longitude"": -119.2272055
+        },
+        ""deliveryAddress"": {
+            ""zipcode"": ""98374"",
+            ""latitude"": 47.1487808,
+            ""longitude"": -122.2507226
+        },
+        ""showProvidersConfidence"": true
+    }
+]'{noformat}
+
+----
+
+Important for test setup  [~accountid:62e7989bec6b328032f0a332] - 
+
+* For transformer service card make sure we have unique delivery and pickup address in each request in the test suite execution. Dont use a single set of pickup and delivery address for the complete load test
+* Use new zipcodes for all requests. 
+* Use only those zips that are available in zip shapers for flavour without Lat-long."
+Perf - Analyse the cross zone load balancing impact on ECS service,"As per [DL-33735|https://delivery-solutions.atlassian.net/browse/DL-33735] , I have analysed few service with cross zone LB enabled and disabled with 1, 2, 3 instances spread across the AZ and how the requests moving to targets in all these scenarios. 
+Please got through the tech solutioning, and replicate this on performance environment and give confirmation on if we can move ahead by enabling cross zone LB for all the services."
+Calibrate the maximum number of connections in pool for postgres client in ETA Service,Calibrate the maximum number of connections in pool for Postgres client in the ETA Service
+Performance analysis of risk-score in DA,"!image-20240308-130900.png|width=1397,height=935!"
+Evaluate the Spot.io launched instances with ECS for Perf ENV Generic and Endurance Tests,"[http://Spot.io|http://Spot.io|smart-link], a platform designed to simplify the process of launching and managing spot instances. Here's a more readable summary of the key points:
+
+# [http://Spot.io|http://Spot.io|smart-link]  *Functionality:*
+#* [http://Spot.io|http://Spot.io|smart-link] serves as a platform for launching and managing spot instances.
+#* It analyzes cluster and service metrics to determine the optimal conditions for launching spot instances.
+# *Instance Launching:*
+#* [http://Spot.io|http://Spot.io|smart-link] dynamically launches spot instances based on the analyzed cluster and service metrics.
+#* The instances can be of any type, providing flexibility in the choice of instance types.
+# *Instance Registration:*
+#* Launched spot instances are registered within the cluster.
+#* Unlike traditional Auto Scaling Groups (ASG), spot instances are not directly managed within an ASG.
+# *ASG Adjustment:*
+#* The POC suggests a model where the ASG count is decreased to accommodate the newly launched spot instances.
+#* It ensures that the desired number of instances is maintained in the ASG.
+# *Service Management:*
+#* Services running in the cluster need to be configured to utilize the new spot instances.
+#* The POC likely involves mechanisms to ensure that services are launched on the newly registered spot instances.
+
+This approach allows for a more dynamic and flexible management of spot instances, optimizing resource utilization based on real-time cluster and service metrics. It represents a departure from the traditional ASG-centric model, providing more agility and efficiency in managing instances within a cluster.
+
+*Cost Analysis sheet*
+[https://docs.google.com/spreadsheets/d/1mJUADg0zUUvr72IWyd8cUyRN7wk3TSA3uX9QzMIhiic/edit#gid=0|https://docs.google.com/spreadsheets/d/1mJUADg0zUUvr72IWyd8cUyRN7wk3TSA3uX9QzMIhiic/edit#gid=0|smart-link] "
+Impact analysis on purge script for collections as per new retention policy implementation,
+Update Performance CloudWatch dashboard with new and updated services,"* The Infra team has shifted to NLB services from ALBs, we need to update the service names in this dashboard - [https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards/dashboard/performance_dashboard|https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards/dashboard/performance_dashboard] 
+* Also, add the metrics of the following services in the dashboard similar to others - 
+** messaging-service
+** communications-service
+** communications-retry-service
+** cron-service
+** batch-processor
+** routing-service
+** fleet-routing-service
+* Also, add the following metrics - 
+** RDS - 
+*** CPU
+*** DatabaseConnections
+*** WriteLatency
+** Elastic cache - 
+*** Engine CPU
+*** CPU Utilization
+*** Current Connections
+*** New Connections
+*** Cache Hit Count
+*** Get Type Command Count
+** SQS Metrics -
+*** Approximate Age Of Oldest Message
+*** Number Of Messages Received
+*** Number Of Messages Deleted
+*** Sent Message Size"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-65.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-64.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-63.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-66.0.0),
+Perf - Setup the code and infra for regression,"[Perf] ALB to NLB migration task -
+
+# Deploy {{qa}} branch on API, SW, DA
+# Check TDs for following services - DA, Rates, SW, Estimates, SB. Check if anything is pointing to sandbox, if yes shift to performance. NODE_ENV should be {{qa}}
+# Spin up following services - API, notifications, messaging, DA, Rates, SW, Estimates, SB
+# Make changes in Admin panel to scale up NLB services. Also changes TD name.
+# Scaling numbers will be 5 containers/service
+# [@Girish|https://delivery-solutions.slack.com/team/U03LTHRA9B8] will migrate the latest QA snap to performance.
+# Verify the generic flavours specific to the above services"
+Perf - Generic Test the newly provisioned NLB services.,"As part of Phase one we have provisioned below NLB services.
+
+{noformat}Delivery-assurance
+Estimates
+Rates
+Smart Windows
+Store boundaries{noformat}
+
+Please perform generic tests covering the code changes and features.
+
+[~accountid:5ee75f40e145af0ab47dacb8] As discussed assigning the ticket to perf team. Please add if the details of testing that you will perform."
+Efficient use of single S3 bucket during serverless deployments,"Additional Requirements that need to be done in the serverless lambda and probably jenkins
+
+* Both the lambdas should have only 1 bucket per account
+* There should be separate folders of dev, qa, sandbox, perf inside a single bucket with the code
+* The name of the bucket should be the name of the service. It should not be followed by random text which is added when serverless creates the bucket
+* Delete all old buckets related to these services
+This is the tentative list:
+
+|[+smart-scaling-function-d-serverlessdeploymentbuck-11gt2708f80cq+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-d-serverlessdeploymentbuck-11gt2708f80cq?region=us-west-2]|
+|[+smart-scaling-function-d-serverlessdeploymentbuck-1fxvj77ht5puh+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-d-serverlessdeploymentbuck-1fxvj77ht5puh?region=us-west-2]|
+|[+smart-scaling-function-d-serverlessdeploymentbuck-6zs33ktmytsh+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-d-serverlessdeploymentbuck-6zs33ktmytsh?region=us-west-2]|
+|[+smart-scaling-function-p-serverlessdeploymentbuck-18c5q89issa41+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-p-serverlessdeploymentbuck-18c5q89issa41?region=us-west-2]|
+|[+smart-scaling-function-q-serverlessdeploymentbuck-1oq9yfoqmllb8+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-q-serverlessdeploymentbuck-1oq9yfoqmllb8?region=us-west-2]|
+|[+smart-scaling-function-v-serverlessdeploymentbuck-x77m1nh0rkcl+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-function-v-serverlessdeploymentbuck-x77m1nh0rkcl?region=us-west-2]|
+|[+smart-scaling-perftest-serverlessdeploymentbucket-186mp1t4jg95t+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-perftest-serverlessdeploymentbucket-186mp1t4jg95t?region=us-west-2]|
+|[+smart-scaling-sandbox-serverlessdeploymentbucket-xv3iqtl1puer+|https://s3.console.aws.amazon.com/s3/buckets/smart-scaling-sandbox-serverlessdeploymentbucket-xv3iqtl1puer?region=us-west-2]|
+
+
+
+Explore - [https://www.serverless.com/plugins/serverless-deployment-bucket|https://www.serverless.com/plugins/serverless-deployment-bucket|smart-link] "
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-PP-61.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-DM-60.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-IA-59.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OP-62.0.0),
+Performance of all APIs (For Sandbox S2024-OP-62.0.0),
+Performance analysis of Place Order flow with Post-Dispatch Exceptions,
+Performance test of Predictive ETA/ETD,Need to check the existing suite
+Dry run setup and execution for migration of timingsOverride collection,"h3. Background & Requirements
+
+To identify the risks, issues and execution for [https://delivery-solutions.atlassian.net/browse/DL-6353|https://delivery-solutions.atlassian.net/browse/DL-6353|smart-link] , we will be picking up {{timingsOverride}} collection.
+
+In this dry run, the following things need to be taken care of - 
+
+* Dry runs variations -
+** Happy flow
+** Roll Back with Bi-directional flow(As per [~accountid:62fdd6409c368329a7afdb36]'s recommendation)
+* Environment to be used - {{performance}}
+* We will be completing the following tasks to migrate {{timingsOverride}} - 
+** [https://delivery-solutions.atlassian.net/browse/DL-30546|https://delivery-solutions.atlassian.net/browse/DL-30546|smart-link] 
+** [https://delivery-solutions.atlassian.net/browse/DL-30548|https://delivery-solutions.atlassian.net/browse/DL-30548|smart-link] 
+* We will set up a JMX script to simulate the load. The load should be equal to the current order load in production.
+* We will also have a script to compare a document from one DB with the document in another DB.
+* This dry run also requires infra changes before and during the test. The changes include - 
+** Setup and verify smart windows and API services in NV region in performance env
+** Verify the 50-50 distribution of load in performance env
+** Verify and dry run the deployment process in the Oregon & NV region in performance env
+* QAs need to have visibility added in their test cases to check for issues during deployment
+
+----
+
+h3. Dry run execution process
+
+h4. Step 1 [Pre-Migration] - 
+
+* Migrate QA snapshot to perf cluster - [~accountid:62fdd6409c368329a7afdb36] 
+* Execute the JMX with the desired load for 60 minutes to get a benchmark.
+* Observe the DB metrics. These will be considered steady-state metrics.
+
+h4. Step 2 [During Migration, Initial sync, No application side changes] - 
+
+* Execute the same JMX used in the previous step without any changes for 60 mins
+* Carefully observe every DB metric
+
+h4. Step 3 [During Migration, real-time sync, No application side changes] - 
+
+* Execute the same JMX used in the previous step without any changes for 60 mins
+* Carefully observe every DB metric
+
+h4. Step 4 [Post Migration, application side changes] - 
+
+* Execute the same JMX used in the previous step without any changes for 60 mins
+* Shift the traffic on performance env to one of the regions from Route 53(master account)
+* Deploy the new application to the region without any traffic
+* Once the deployment is complete, shift the complete traffic to this region(with the new application code) - Code changes + ENV variable changes
+* Deploy the new application to the remaining region
+* Once the deployment is complete, shift the traffic to 50-50 in both regions.
+* Observe the DB metrics during the whole process
+* QA to check the issues during the whole process
+
+
+
+Step-4  will be repeated for rollback tests"
+Performance benchmarking for Client Facing APIs (For Sandbox S2024-OR-58.0.0),
+Load Test on Timings Override on a dummy Tenant on Production during Deployment,"Load Test on Timings Override on a dummy Tenant on Production during Deployment.
+
+The test should override existing timingsOverrides and also be able to create new ones. The test should perform a load test on smartWindows API and assert whether the APIs are working as expected.
+
+The load should be 1x of the current production traffic."
+Load Test on Timings Override on a dummy Tenant on Sandbox during Deployment,"Load Test on Timings Override on a dummy Tenant on Sandbox during Deployment
+
+The test should override existing timingsOverrides and also be able to create new ones. The test should perform a load test on smartWindows API and assert whether the APIs are working as expected.
+
+The load should be 1x of the current production traffic."
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-PP-57.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-DM-56.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-IA-55.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-OR-54.0.0),
+Add the new collections from dev-log-cluster used in Generic and Endurance Tests in the cleanup script,"* Add the new collections from dev-log-cluster used in Generic and Endurance Tests in the cleanup script
+* Also, add a script to cleanup the cache for Endurance and Generic tenants"
+Run protectionRule migration on Endurance tenants in QA,
+Performance Testing of OSRM,Perform functional testing of OSRM to validate that it accurately calculates delivery distances for different combinations of stops.
+Add ZPL flavour in generic suite to check labels performance,"# Point the endpoint to QA
+# Connect with [~accountid:5d358723f8be2f0c20bb5755] to understand ZPL flavor in labels  - Check if we have new and old labels for ZPL file type as well.
+# Create the required cURL
+# Add the flavour to the Generic suite "
+Point all the API endpoints to performance in All API suite,"We point some of the APIs to sandbox in all API suites - 
+
+!image-20231114-080321.png|width=1590,height=878!
+
+Changes needed - 
+
+* Add the missing routes in the performance API gateway
+* Changes in JMeter to point to performance endpoint"
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-PP-53.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-DM-52.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-IA-51.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-OR-50.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-PP-49.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-DM-48.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-IA-47.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-OR-46.0.0),
+Performance benchmarking for Client Facing APIs (For Sandbox S2023-PP-45.0.0),
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-DM-44.0.0),
+Setting up Mock Providers for Big Lots,"We need to evaluate the production latency for all the providers assigned to big lots and set up mock providers simulating the same latency, these mock providers will help us simulate a production-like behavior for big lots providers and to emulate run their load tests as expected.
+
+Once the mock providers are set, perform a load test with the same load that Big Lots sends to the DS performance environment during their load test and confirm the latency of our services, especially rates and smart windows. 
+
+The expectations are that the latencies should be in milliseconds.
+
+* For getting the list of providers to mock, check the Biglots tenant on sandbox"
+Ability to refresh token for New Labels ,"In a generic test suit, the New Labels API has a token. By the time the New Labels thread group is started, this token expires and we get 100% error rates. We need to fix this using the following approach - 
+
+* Study JSON/regex extractor plugin in JMeter
+* Add a PO call to get the labels link in response and extract this link.
+* Use this link in the New Labels thread group
+* Implement and test the same in the Generic suite
+* Things to test - 
+** Check token expiry time
+** Check if we will have to make multiple PO calls in case the token gets expire in the middle of the load test"
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-IA-43.0.0),
+Test suite creation,Create the requisite test suite for it. Do trials and get approval for the SLAs and the testing method
+Script to add test to Graphana,Add records of the test to graphana. Create a script for the same
+Convert perf admin portal into SSR and host it inside the grafana server,"h2. Background
+
+The UPS Penetration testing team has reported some issues with the performance admin portal. They state that they need to scan it as it is internet-facing. We do not want to bring this portal into their purview of penetration testing. Hence, we should host this portal server side and keep it accessible only through VPN. This way we can avoid penetration testing on it as it is internal. We have committed that this will be done by November end
+
+----
+
+h2. Tech Solution
+
+h3. Converting existing portal to SSR - 
+
+# Update {{ngx-spinner}} package to version → '{{14.0.0}}'
+# Run {{npx ng add @nguniversal/express-engine@14.0.0}}
+# The above command will install  nguniversal/express-engine and create/update the below files - 
+{noformat}CREATE src/main.server.ts (677 bytes)
+CREATE src/app/app.server.module.ts (318 bytes)
+CREATE tsconfig.server.json (296 bytes)
+CREATE server.ts (2023 bytes)
+UPDATE package.json (1843 bytes)
+UPDATE angular.json (6052 bytes)
+UPDATE src/main.ts (536 bytes)
+UPDATE src/app/app.module.ts (3251 bytes)
+UPDATE src/app/app-routing.module.ts (3766 bytes){noformat}
+# In {{server.ts}} file, change the port to 4200
+# Update the {{hostname}} in {{server.listen}} function to {{'0.0.0.0'}}
+# Use {{index.html}} instead of {{index.original.html}} which gets assigned to {{const indexHtml}} in server.ts
+# Run {{npm run dev:ssr}} to check if the app runs locally. Note that the login page should now be loaded server-side
+!image-20240926-130049.png|width=1907,height=1007,alt=""image-20240926-130049.png""!
+# Once this is successful, run {{npm run build:ssr}} to create the build
+# Run {{npm run serve:ssr}} to run and confirm the build. API calls should work 
+
+h3. Deploy the SSR app - 
+
+# We will be hosting the admin panel as a systemd service on {{Perf-loadTesting-server}}
+# Create a folder under ubuntu user - {{/home/ubuntu/performance-admin-panel}}
+# Copy the dist from local to the created folder on server
+# Create {{systemd}} service under {{/etc/systemd/system}} named → performance_admin_panel.service
+# These should be the content of the service - 
+{noformat}[Unit]
+Description=Performance Admin Panel
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /home/ubuntu/performance-admin-panel/dist/my-app/server/main.js
+Restart=on-failure
+WorkingDirectory=/home/ubuntu/performance-admin-panel
+User=ubuntu
+Environment=NODE_ENV=production
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=performance-admin-panel
+
+[Install]
+WantedBy=multi-user.target{noformat}
+# Run {{systemctl daemon-reload}}
+# Enable and Start the {{performance_admin_panel.service }}using {{systemctl}} commands
+# Start the service and test the admin panel functionalities on this URL →  {{http://10.10.3.122:4200/}}
+
+h3. Changes in deploy.sh -
+
+# Remove these statements 
+{noformat}npm run build
+aws s3 sync ./dist/ s3://performance-ds-admin
+aws cloudfront create-invalidation --distribution-id E2BZI0S1U6XJIV --paths ""/*""{noformat}
+# Add bash statements to -
+## Run {{npm run build:ssr}}
+## SSH into the server
+## Copy/Replace the dist from the local to the server folder
+## Restart the systemd performance_admin_panel.service
+
+h3. Discontinue Client-side Rendered Admin Panel - 
+
+# After confirming, testing and getting reviewed by peer, ask Infra team to take the linked card"
+JMeter version upgrades / older version deletion,"We have to update / remove software that are listed below. The object is to show that the Log4j versions above 2.17 are only present
+
+||*Server*||*Folder*||*Action*||
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/jenkins/apache-jmeter-5.4.1/|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/ubuntu/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/ubuntu/__MACOSX/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-08de489c6316a61ad (Jenkins CI/CD Server-Testing-slack-notifications)|/opt/jmeter/apache-jmeter-5.3|Delete as we are not using jmeter on this server|
+|i-08de489c6316a61ad (Jenkins CI/CD Server-Testing-slack-notifications)|/home/ubuntu/apache-jmeter-5.2.1|i-08de489c6316a61ad (Jenkins CI/CD Server-Testing-slack-notifications)|
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/jenkins/apache-jmeter-5.4.1/|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/ubuntu/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-0da84653ef5865bca clone-Loadtesting-server-private-1|/home/ubuntu/__MACOSX/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-08a05d6733454c9ec (LoadTestingPrivateProd2)|/home/jenkins/apache-jmeter-5.4.1/|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-08a05d6733454c9ec (LoadTestingPrivateProd2)|/home/ubuntu/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|
+|i-08a05d6733454c9ec (LoadTestingPrivateProd2)|/home/ubuntu/__MACOSX/apache-jmeter-5.4.1|Delete as there are higher versions in /home/ubuntu/loadtesting/apache-jmeter-5.5|"
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-OR-42.0.0),
+Endurance Test - Dec-24,
+Endurance Test - NOV-24,
+Endurance Test - Oct-24,
+Endurance Test - Sep-24,
+Endurance Test - Aug-24,
+Endurance Test - Jul-24,
+Endurance Test - Jun-24,
+Endurance Test - May-24,
+Endurance Test - Apr-24,
+Performance of all APIs (For Sandbox S2024-OP-101.0.0),
+Performance of all APIs (For Sandbox S2024-PP-97.0.0),
+Performance of all APIs (For Sandbox S2024-PP-93.0.0),
+Performance of all APIs (For Sandbox S2024-PP-89.0.0),
+Performance of all APIs (For Sandbox S2024-PP-85.0.0),
+Performance of all APIs (For Sandbox S2024-PP-81.0.0),
+Performance of all APIs (For Sandbox S2024-PP-77.0.0),
+Performance of all APIs (For Sandbox S2024-PP-73.0.0),
+Performance of all APIs (For Sandbox S2024-PP-69.0.0),
+Performance of all APIs (For Sandbox S2024-PP-65.0.0),
+Performance of all APIs (For Sandbox S2024-PP-61.0.0),
+Performance of all APIs (For Sandbox S2024-PP-57.0.0),
+Performance of all APIs (For Sandbox S2024-PP-100.0.0),
+Performance of all APIs (For Sandbox S2024-IAF-96.0.0),
+Performance of all APIs (For Sandbox S2024-DM-92.0.0),
+Performance of all APIs (For Sandbox S2024-DM-88.0.0),
+Performance of all APIs (For Sandbox S2024-DM-84.0.0),
+Performance of all APIs (For Sandbox S2024-DM-80.0.0),
+Performance of all APIs (For Sandbox S2024-DM-76.0.0),
+Performance of all APIs (For Sandbox S2024-DM-72.0.0),
+Performance of all APIs (For Sandbox S2024-DM-68.0.0),
+Performance of all APIs (For Sandbox S2024-DM-64.0.0),
+Performance of all APIs (For Sandbox S2024-DM-60.0.0),
+Performance of all APIs (For Sandbox S2024-DM-56.0.0),
+Performance of all APIs (For Sandbox S2024-DM-99.0.0),
+Performance of all APIs (For Sandbox S2024-DM-95.0.0),
+Performance of all APIs (For Sandbox S2024-IA-91.0.0),
+Performance of all APIs (For Sandbox S2024-IA-87.0.0),
+Performance of all APIs (For Sandbox S2024-IA-83.0.0),
+Performance of all APIs (For Sandbox S2024-IA-79.0.0),
+Performance of all APIs (For Sandbox S2024-IA-75.0.0),
+Performance of all APIs (For Sandbox S2024-IA-71.0.0),
+Performance of all APIs (For Sandbox S2024-IA-67.0.0),
+Performance of all APIs (For Sandbox S2024-IA-63.0.0),
+Performance of all APIs (For Sandbox S2024-IA-59.0.0),
+Performance of all APIs (For Sandbox S2024-IA-55.0.0),
+Performance of all APIs (For Sandbox S2024-IA-98.0.0),
+Performance of all APIs (For Sandbox S2024-OR-94.0.0),
+Performance of all APIs (For Sandbox S2024-OP-86.0.0),
+Performance of all APIs (For Sandbox S2024-OR-82.0.0),
+Performance of all APIs (For Sandbox S2024-OP-78.0.0),
+Performance of all APIs (For Sandbox S2024-OP-74.0.0),
+Performance of all APIs (For Sandbox S2024-OP-70.0.0),
+Performance of all APIs (For Sandbox S2024-OR-66.0.0),
+Performance of all APIs (For Sandbox S2024-OR-62.0.0),
+Performance of all APIs (For Sandbox S2024-OR-58.0.0),
+Performance of all APIs (For Sandbox S2024-OR-54.0.0),
+Endurance Test -Dec-23,
+Endurance Test -Oct-23,
+Performance of all APIs (For Sandbox S2023-PP-53.0.0),
+Performance of all APIs (For Sandbox S2023-DM-52.0.0),
+Performance of all APIs (For Sandbox S2023-IA-51.0.0),
+Performance of all APIs (For Sandbox S2023-OR-50.0.0),
+Performance of all APIs (For Sandbox S2023-PP-49.0.0),
+Performance of all APIs (For Sandbox S2023-DM-48.0.0),
+Performance of all APIs (For Sandbox S2023-IA-47.0.0),
+Performance of all APIs (For Sandbox S2023-OR-46.0.0),
+Performance of all APIs (For Sandbox S2023-PP-45.0.0),
+Performance of all APIs (For Sandbox S2023-DM-44.0.0),
+Performance of all APIs (For Sandbox S2023-IA-43.0.0),
+Performance of all APIs (For Sandbox S2023-OR-42.0.0),
+Performance Test Setup for Big Lots Test (02-Oct-23),"
+
+|Scope Definition|Expectations / Desired Outcomes|Expected RPS|Expected Latency|Requested Date & Time|Requested Run Time|Timezone|
+|80,000 concurrent vusers, 6 hours|Make DS - Performance Test environment available for the load test|167|150|9/28/2023|6|EST|"
+Performance of all APIs  (For Sandbox S2023-PP-41.0.0),
+Performance of all APIs  (For Sandbox S2023-IA-39.0.0),
+Performance Test for <DL-23549> - Manifest,
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-PP-41.0.0),
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-OR-38.0.0),
+Fix issues with All API suite for QA environment,"* In All API suites, we have routes that point to both performance and sandbox.
+* As we are restoring QA to performance, sandbox routes should work as expected.
+* We need to add a new tenantId, x-api-key for the QA tenant that will be used for performance endpoints and maintain existing tenantId, x-api-key for Sandbox endpoints. 
+* Create a user in QA and add the userId in the All API JMX"
+Performance of all APIs (For Sandbox S2023-OR-38.0.0),
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-PP-37.0.0),
+Performance of all APIs  (For Sandbox S2023-36.2.0 / S93),
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-36.2.0 / S93),
+Performance analysis of PO for shipping type Orders,
+Ability to override parameter store data via performance admin panel,"* Create a new section in the admin panel to update the parameter store data
+* The user will select a service from the drop-down to fetch the parameters w.r.t that service
+* Add a button to fetch the parameters for the selected service. Use - [https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/ssm/command/GetParametersByPathCommand/|https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/ssm/command/GetParametersByPathCommand/]
+* Display all the parameters in Key, Value format similar to environment variables UI
+* These fields about the parameters should be visible - 
+** {{Name}}
+** {{Type}}
+** {{Value}}
+* Every field will have a button to update the value
+* Use {{PutParameterCommand}} to update the value
+
+ "
+Remove all secrets to remove credentials from TDs,"# Credentials should not be present in the task definitions
+# Option to update parameter store values from perf admin panel"
+Performance of all APIs  (For Sandbox S2023-35.3.0 / S92),
+Performance benchmarking for Client Facing APIs  (For Sandbox S2023-35.3.0 / S92),
+[Infra] Use separate parameters for DB_URL variable for all perf services ,
+Admin panel - UI/UX Improvements,"h3. Requirements - 
+
+* Performance Admin Panel can be made more like a tool to showcase the latest performance numbers, comparison dashboards, etc
+* We need to restructure the current version to accommodate the new additions and to make it ready for the next features
+* We won't be focusing on styling the panel more as its an internal tool and we don't want to spend more time on the styling part
+* We can choose a theme and refer to the components from the theme to achieve this
+* We will add ‘Angular Router’ to make the frontend for usable and scaleable 
+
+----
+
+*Sidebar -* 
+
+* We will add a sidebar to the current layout
+* The sidebar will contain the following sections -
+** Home
+** Services Setup
+** Execute tests
+** Reports
+** Database actions
+
+----
+
+*Landing page -* 
+
+* The Home section will contain graph widgets with the latest generic test, endurance test, PET results
+* We will have cards(Tiles) to display the current P95 values of Place Order, DA, Rates values
+
+----
+
+*Services Setup -* [https://delivery-solutions.atlassian.net/browse/DL-23599|https://delivery-solutions.atlassian.net/browse/DL-23599|smart-link]
+
+*Execute tests -* [https://delivery-solutions.atlassian.net/browse/DL-23600|https://delivery-solutions.atlassian.net/browse/DL-23600|smart-link] 
+
+*Reports -* [https://delivery-solutions.atlassian.net/browse/DL-23601|https://delivery-solutions.atlassian.net/browse/DL-23601|smart-link] 
+
+----
+
+*Database actions -*
+
+* In this section, we will have all the database actionable like - 
+** Pause/Resume databases
+** Snapshot Migration
+* Databases to include - 
+** Perf cluster
+** Perf-sharded cluster
+** Perf RDS
+** Perf-postgres
+* Ability to toggle On/Off triggers - [https://delivery-solutions.atlassian.net/browse/DL-12762|https://delivery-solutions.atlassian.net/browse/DL-12762|smart-link]. Discuss with [~accountid:62aad5226085950068af4d77] for the details."
+Performance analysis of smart-windows,"* Self-delivery as DSP
+* 10X → All SLAs should meet"
+Ability to overwrite task level memory and CPU allocation from panel,"We set the memory and CPU allocation by manually editing the task definition and creating a new one. We need to  update the following things and deploy the new task definition - 
+
+* CPU
+* CPUReservation
+* Memory
+* MemoryReservation
+
+This will require changes in both FE and BE. 
+
+Front-end - 
+
+* Add a button to set the above-mentioned parameters in the service edit form alongside ‘Save’ button. Name of the button - ‘Update task parameters’
+!image-20231101-084105.png|width=1427,height=758!
+
+* A confirmation should show up. {{'This action will create a new task definition and update it. Do you want to proceed?'}}
+* On clicking this button, an API call ({{/updateTaskParameters}})to update the task parameters should be called.
+
+.Back-end - 
+
+* POST API ({{/updateTaskParameters}}) in ‘service update’ backend lambda
+* The body will contain {{serviceName}}, {{task parameter values}},{{ task-definition-arn}}
+* The business logic should be like this - 
+{noformat}const { ECSClient, DescribeTaskDefinitionCommand, RegisterTaskDefinitionCommand, UpdateServiceCommand } = require(""@aws-sdk/client-ecs"");
+
+async function updateTaskDefinition() {
+  const ecsClient = new ECSClient({ region: ""your-aws-region"" });
+  
+  // Specify your task definition ARN and the new resource values here
+  const taskDefinitionArn = ""your-task-definition-arn"";
+  const memory = 512; // New memory value in MiB
+  const memoryReservation = 256; // New memory reservation value in MiB
+  const cpu = 256; // New CPU value in units
+  const cpuReservation = 128; // New CPU reservation value in units
+  
+  try {
+    // Step 1: Describe the existing task definition
+    const describeParams = { taskDefinition: taskDefinitionArn };
+    const describeCommand = new DescribeTaskDefinitionCommand(describeParams);
+    const existingTaskDefinition = await ecsClient.send(describeCommand);
+
+    // Create a new task definition with the desired changes
+    const newTaskDefinition = {
+      family: existingTaskDefinition.family,
+      containerDefinitions: existingTaskDefinition.containerDefinitions.map((container) => ({
+        ...container,
+        memory,
+        memoryReservation,
+        cpu,
+        cpuReservation,
+      })),
+    };
+
+    // Step 2: Register the new task definition
+    const registerParams = { family: newTaskDefinition.family, containerDefinitions: newTaskDefinition.containerDefinitions };
+    const registerCommand = new RegisterTaskDefinitionCommand(registerParams);
+    const newTaskDefinitionResult = await ecsClient.send(registerCommand);
+
+    console.log(""New task definition ARN:"", newTaskDefinitionResult.taskDefinition.taskDefinitionArn);
+
+    // Step 3: Update your ECS service to use the newly registered task definition
+    const updateServiceParams = {
+      service: ""your-ecs-service-name"",
+      taskDefinition: newTaskDefinitionResult.taskDefinition.taskDefinitionArn,
+    };
+    const updateServiceCommand = new UpdateServiceCommand(updateServiceParams);
+    const updateServiceResult = await ecsClient.send(updateServiceCommand);
+
+    console.log(""ECS service updated:"", updateServiceResult.service.serviceName);
+  } catch (error) {
+    console.error(""Error updating task definition:"", error);
+  }
+}
+
+updateTaskDefinition();
+{noformat}
+
+Test this thoroughly and deploy the changes. "
+Admin panel - Test Reporting Section,"h3. Requirements - 
+
+* We are introducing a better way to report the results through the performance admin panel
+* In this section, we will have logs, confluence report links, and comparison graphs for better visibility of the load tests
+
+----
+
+*List view -* 
+
+* This will be the list of the last 10 performance tests and will be the view when someone enters this section
+* There will be the following columns - 
+** Test Name
+** Executed At
+** Confluence page
+* We will have a collection to save the test info which will have the following fields - 
+** {{name}}
+** {{confluenceLink}}
+** {{executedAt}}
+** {{testResults}}: Result in JSON format generated from JMeter
+** {{isReportGenerated}}
+* Develop an API to get this test info for the listing page
+
+----
+
+*Generate Report -* 
+
+* There will be a button at the top to generate the report
+* On clicking the button, a pop-up will appear with a search box with auto-suggestions. User will select the name of the test and click on generate.
+* On clicking generate button, "
+Admin panel - Test Setup Section,"h3. Requirements - 
+
+* This section is focused on test setting up which includes code deployment, saving task definitions, and service scaling.
+* There will be 3 tabs - 
+** {{Performance Services}}
+** {{Scaling Configuration}}
+** {{Task Definition Configuration}}
+* The Services tab will be having a table view of all the performance services which is the same as in the current admin panel
+* The Scaling tab will be having a table view of the services running with - Min, Max, Current, Registered instances, and TD Number details
+* We are introducing a new feature to save task definition configs of the performance environment. This will act like a version control system for us as developers need to use different versions of codes for their tests. The form details are added in the subtask.
+* The scaling tab will still have Scale-up and Scale-down buttons
+
+----
+
+* *Enhancements in Scale-up -*
+** The user will only have to enter the ECS scaling number and the required EC2 instances will be calculated in the backend as per this calculator - [https://docs.google.com/spreadsheets/d/1p_PR_VTsFonHtaNK_uOwflRcvt--ljtroJ_NTdo_a0U/edit#gid=0|https://docs.google.com/spreadsheets/d/1p_PR_VTsFonHtaNK_uOwflRcvt--ljtroJ_NTdo_a0U/edit#gid=0|smart-link] 
+** A dropdown at the top with the following values - 
+*** Add Endurance numbers
+*** Add PET numbers
+*** Add Generic numbers
+** When a user selects any of the above values, the predefined number will be populated in the ECS scaling numbers form
+** Scale-up should not happen in batches which is an issue currently. Make necessary backend changes
+** Launch configurations are to be deprecated and we will use Launch Templates.
+
+----
+
+* *Enhancements in Scale-down -*
+** Add a toggle switch at the top with the label - ‘Scale down ECS’
+** If this is true, only ECS tasks will scale down, and EC2 counts will remain the same
+** A checkbox at the top to select all the services
+
+----
+
+*The task Definition Configuration tab -* 
+
+* Listing view - 
+** will have a table view of the last 20 saved configurations which will be fetched from the database. 
+** Every row will have a Task Definition Config name, created at, a {{Set}} button, and a {{Delete}} button
+** {{Set}} button will set the config in AWS ECS on clicking. 
+** {{Delete}} button will delete the config from DB
+** Any error that occurred while setting/deleting the config should be sent in response and shown to the user in the form of a pop-up/notification.
+** Confirmation pop-up to confirm both these operations. 
+* A {{Create}} button needs to be added at the top right to create a new config which will open a form
+* A form needs to be added with the fields mentioned below -
+** {{Configuration Name}}
+** {{Description}} 
+** <Button> {{Fetch active task definitions}}
+** {{Enter task definitions in JSON format}} - Eg - (Integrate a code block for this field, no validation required)
+* {code:json}{ ""autoretry-perf"":48
+  ""api-perf-stage"":520,
+  ""business-rules-perf"":291,
+  ""store-hierarchy-perf"":136,
+  ""notification-perf"":96,
+  ""cron-perf"":260,
+  ""communication-perf"":50,
+  ""communication-retry"":26,
+  ""batch-processor-perf"":76,
+  ""place-order-async-sqs-consumer-perf"":48,
+  ""placeorderasync-perf"":14,
+  ""processorderasync-perf"":12,
+  ""cron-service-perf"":28
+  ""provider-webhook-perf"":9
+}
+{code}
+** <Button> {{Save}}
+** <Button> {{Cancel}}
+* A new collection named {{taskDefinitionConfig}} needs to be added in the {{dev}} cluster under the {{performance}} database. "
+NodeSource PoC for viewing Node related performance metrics,
+Performance benchmarking for Client Facing APIs  (For 28-JUN-23 Sandbox S2023-34.1.0 / S90),
+Performance of all APIs  (For 28-JUN-23 Sandbox S2023-34.1.0 / S90),
+Provision performance environment for Big Lots Load Tests - 27 July 2023,"Take KT from [~accountid:62aad5226085950068af4d77] and provision necessary infra for Big Lots Load Test. The following services they test usually:
+
+* PO
+* Smart Windows
+* Rates
+* Delivery Assurance
+
+High traffic is usually expected on DA in this test. Refer to the last test results and make provisions accordingly.
+
+Make sure DA caching is enabled during the test!
+
+Proposed load test dates are:
+
+* 12 July 2023
+* 14 July 2023
+* 18 July 2023
+* 20 July 2023
+* 25 July 2023
+* 27 July 2023
+
+Need to confirm with CSMs [ [~accountid:5d67c5b61ea0ec0c10fef39d] [~accountid:6278d19923d61e006fc3b454] ]  if all of the provisioning services are required on all of these dates.
+
+As informed on mail the load test will be supported on 27 July 2023"
+Figure out scaling numbers to avoid container deregistration in notification MS ,"*Background -*
+
+* During the UPS load tests, we observed deregistration in notification MS multiple times. These deregistrations were mainly due to high CPU utilization in the respective EC2 instances. As we are hitting PO at a high TPS, we scale API to a high number and these containers call notifications MS multiple times in a PO call. This is being optimized and hence we need to take this card once the optimization is on the sandbox.
+* The impact on Notifications will be reduced as in the card([https://delivery-solutions.atlassian.net/browse/DL-17976|https://delivery-solutions.atlassian.net/browse/DL-17976|smart-link]) we are reducing the call to Notifications MS.
+* Also, with Customer Notifications disabled for Vulcan, Notifications MS should not have a lot of calls
+
+----
+
+*Test-cases -*  
+
+# With the full UPS load, there should be no container deregistrations in Notifications MS
+# Check scale-up and scale-down for the Notifications service
+# No timeouts for Notifications MS should be observed during the load test.
+
+----
+
+*Test setup -*
+
+# No DB cleanup
+# Enabled container insights for Notifications
+# Start
+# Short tests with UPS load(1000 RPS)
+
+----
+
+*Test monitoring -*
+
+# Check the average memory and CPU utilization. Reduce the container counts if memory/CPU util is very low
+# Newrelic traces to be evaluated
+# CloudWatch dashboard
+
+----
+
+*Results reporting -* 
+
+# Final scaling numbers"
+Check Vulcan flow if the batching process fails,"*Background -*
+
+* According to our current logic in batching, if the batching process fails or the code gets caught in any of the try-catch blocks, the order gets immediately dispatched. In this case, the order will not follow the orchestration rule created for Vulcan.
+
+----
+
+*Test-cases -*  
+
+# Check place-order TPS and response times in this scenario
+# Check the processing time for all the 4 slots
+# Check MongoDB performance
+
+----
+
+*Test setup -*
+
+# No DB cleanup
+# throw an error in the [processBatching|https://bitbucket.org/deliverysolutions/api.deliverysolutions/src/5c41b46bcc12c9a0e4f5808e49f27368effc972e/src/services/RulesPackage/RulesPackageComponent.js#lines-36] function
+# UPS load test with 1000 RPS
+# Enable CloudWatch logs in API-MS to check if batching fails
+
+----
+
+*Test monitoring -*
+
+# New Relic monitoring to check TPS being hit
+# AWS CloudWatch dashboard
+# MongoDB performance metrics
+
+----
+
+*Results reporting -* 
+
+# Observations and red flags"
+Cloudwatch Cleanup,"!Screenshot 2023-06-08 at 11.31.50 AM.png|width=1440,height=900!
+
+There were some anomalies found by Ibex from Prasanthkumar on Cloudwatch billing. After investigating we found some log groups that is having too much data stored in them. 
+
+!Screenshot 2023-06-08 at 11.35.30 AM.png|width=724,height=155!
+
+We need to clean up those log groups and set Expire Time for log groups. 
+Also, make changes in AWS services to stop storing those logs.
+And inform perf team to make sure about storing the logs to log groups.
+Also APIgateway Logs can be disabled if Security Alerts come let the security team supress those alerts for perf related environment."
+Performance test on DA Compliance,"Do a 10-minute performance test on DA Compliance, Compliance feature is only used in the Texas region so use different zipcodes from the Texas region to test the service. The test need to be conducted at 5 RPS.
+
+Please add the test in our generic test suite as well"
+ Maintenance Task: Q2-M3,"* Need to provide a feature to clean up the OrderTenantMapping collection in the clean-up script. Make sure not to delete the mapping required for testing webhooks.
+* Need a way to delete the following data for orders setup for webhooks as these may create issues during webhooks load tests
+** Metering
+** Status
+** Event Logs
+** Routes
+* -Setup Orders For Webhooks in Sandbox Cluster such that orders are not deleted from the performance cluster whenever the performance cluster is restored to the latest snapshot from the sandbox. Use a dedicated tenant for this, and make relevant changes in the JMX file-"
+Performance Evaluation Test on HTTP connection pooling implementation in Place Order Flow,Performance Evaluation Test on HTTP connection pooling implementation in Place Order Flow
+Performance Evaluation Test at 300 TPS by setting w:2 in the MongoDB Connection String,
+Performance Environment Maintenance Tasks - Q2 - M2,"* Sync All environment variable changes
+* Implement Task Placement changes on all services in a performance environment
+* Make a change to setup Roadie Webhooks in all Endurance Tests flavors
+* Add dedicated headers for live and status webhooks in all Endurance Tests flavors
+* Remove x-api-key in Webhook calls for all Endurance Tests flavors
+* Clean up unnecessary load balancers and services in performance environment"
+Retry NLB Set for Performance,Retry NLB Set for Performance
+PET for Removing yield/await and async in order.js  DL-19161,Need to do a performance evaluation test for [https://delivery-solutions.atlassian.net/browse/DL-19161|https://delivery-solutions.atlassian.net/browse/DL-19161|smart-link] 
+Performance benchmarking for Client Facing APIs (For 18-JUL-23 Sandbox S2023-35.0.0 / S91),
+Performance of all APIs (For 18-JUL-23 Sandbox S2023-35.0.0 / S91 ),
+Performance of all Client Facing APIs (For 09-MAY-23 Sandbox S2023-32.2.0 / S88 ),
+Performance benchmarking for Client Facing APIs (For 25-APR-23 Sandbox S2023-32.0.0 / S88),
+Performance of all APIs (For 25-APR-23 Sandbox S2023-32.0.0 / S88 ),
+Performance benchmarking for Client Facing APIs (For 11-APR-23 Sandbox S2023-31.2.0 / S87),
+Performance of all APIs (For 11-APR-23 Sandbox S2023-31.2.0 / S87 ),
+Analyse degradation of response times with Webhooks ,
+Performance Evaluation Test at 300 TPS,
+Test MongoDB's cross regional replication impacts write speed,"Perform the following load test to compare write latency impacts in cross regional replication.
+
+h3. Test 1:
+
+# Setup 5 node cluster in perf without cross regional replication [~accountid:62fdd6409c368329a7afdb36] 
+#  Do a load test with {{w:majority}} for writes [~accountid:5ee75f40e145af0ab47dacb8] 
+# Grab the results [~accountid:62fdd6409c368329a7afdb36] 
+
+
+
+h3. Test 2:
+
+# Setup 5 node cluster in perf with cross regional replication [~accountid:62fdd6409c368329a7afdb36] 
+#  Do a load test with {{w:majority}} for writes [~accountid:5ee75f40e145af0ab47dacb8] 
+# Grab the results [~accountid:62fdd6409c368329a7afdb36] 
+
+
+
+h3. Test 3:
+
+# Setup 5 node cluster in perf without cross regional replication [~accountid:62fdd6409c368329a7afdb36] 
+# Upgrade cluster to 5.0
+#  Do a load test with {{w:majority}} for writes [~accountid:5ee75f40e145af0ab47dacb8] 
+# Grab the results [~accountid:62fdd6409c368329a7afdb36] 
+
+
+
+Each test can be 30 mins of PO such that DB does not crash."
+Performance Evaluation test for Convert metering,
+Change format of the perf cluster uptime email,"Currently, perf cluster uptime mention each EC2 that is up. example:
+
+
+{noformat}{
+        ""name"": ""ecs-delivery-assurance-perf"",
+        ""instanceId"": ""i-09edaab0558af3340"",
+        ""launchTime"": ""2023-01-25T08:56:14.000Z"",
+        ""aliveSince"": ""8 Hours"",
+        ""instanceType"": ""m6i.large""
+    }{noformat}
+
+This should be converted to. So each array element is for the service which is up
+
+{noformat}{
+        ""name"": ""ecs-delivery-assurance-perf"",
+        ""ec2Count"": 6,
+        ""launchTime"": ""2023-01-25T08:56:14.000Z"",
+        ""aliveSince"": ""8 Hours"",
+        ""instanceType"": ""m6i.large""
+    }{noformat}"
+Convert Performance Admin Serverless backend to Node version 18,"Nodejs 14 is deprecated by AWS for lambdas. It is not going to be supported from November 27th and will not allow any deployments from January. Hence, this needs to be updated"
+Performance Evaluation test for orderStatus flattening,Need to execute a 200x performance evaluation test for [https://delivery-solutions.atlassian.net/browse/DL-2786?search_id=1f228636-3d42-42e4-aaee-74378675de70|https://delivery-solutions.atlassian.net/browse/DL-2786?search_id=1f228636-3d42-42e4-aaee-74378675de70|smart-link] 
+Endurance Test - FEB-23,
+Performance benchmarking for Client Facing APIs (For 28-MAR-23 Sandbox S2023-31.0.0 / S87),
+Performance of all APIs (For 28-MAR-23 Sandbox S2023-31.0.0 / S87 ),
+Performance benchmarking for Client Facing APIs (For 28-FEB-23 Sandbox S2023-30.0.0 / S86),
+Performance of all APIs (For 28-FEB-23 Sandbox S2023-30.0.0 / S86 ),
+Performance benchmarking for Client Facing APIs (For 31-JAN-23 Sandbox S2023-29.0.0 / S85),
+Performance of all APIs (For 31-JAN-23 Sandbox S2023-29.0.0 / S85 ),
+Performance benchmarking for Client Facing APIs (For 09-JAN-23 Sandbox S2023-28.1.0 / S84),
+Performance of all APIs (For 09-JAN-23 Sandbox S2023-28.1.0 / S84 ),
+Performance test for Multiple Instance of Provider (DL-11988),Performance test for [https://delivery-solutions.atlassian.net/browse/DL-11988|https://delivery-solutions.atlassian.net/browse/DL-11988|smart-link]
+Automation postman regression suite for DL-5459,
+Performance Benchmarking for client facing APIs (S2022-27.2.0),
+Performance of all APIs  (S2022-27.2.0),
+Performance Benchmarking for client facing APIs (S2022-27.0.0),
+Performance of all APIs (S2022-27.0.0),
+ Performance Evaluation Test for DL-5459,
+Refresh Client Facing APIs(Generic) test suite,"Description -
+
+* Update the launch template similar to the production mentioned here - [https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit#gid=2042619502|https://docs.google.com/spreadsheets/d/1FKGhS_Q3rp6dcbPAWVhz1SOrLNgliQqfPCaGm1MVphY/edit#gid=2042619502|smart-link] 
+* Update the scaling numbers on the admin panel. Add a new option in the dropdown named Generic V2
+* Update the traffic and add the new flavours
+
+Sheet to refer to - 
+
+[https://docs.google.com/spreadsheets/d/1PTpV4VtzWQvTajgA2QAtRr2n7mYhd5gXs-o0UTA3lsI/edit#gid=0|https://docs.google.com/spreadsheets/d/1PTpV4VtzWQvTajgA2QAtRr2n7mYhd5gXs-o0UTA3lsI/edit#gid=0|smart-embed]
+
+ "
+UPS Compliance Training - Optimisation - Udal,
+Performance test on all flavors of timings API ,"Sephora has reported that performance of timings override is performing badly. This was caused due to missing indexes.
+
+# Take various flavours from the regression scripts for the APIs.
+# Perform quick load tests of 10 users for 5 mins
+# Add requisite index (reference: sandbox_sephora_us database)
+# Perform the test again"
+Performance Evaluation Test for Refactor entities such that non-Normalized fields are not sent API Response or stored in database,
+Performance Evaluation Test for routes Flatening,
+Performance Evaluation Test for 50-50 active-active,

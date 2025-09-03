@@ -1,0 +1,274 @@
+Summary,Description
+Handle Cron event status race condition more gracefully,"In case where the status of an *in-progress* cron event is manually updated to *""cancelled""* in the database (through external factors), the ongoing execution of that event is not actually stopped. If the in-progress event is responsible for scheduling new events, those will continue to be created and executed in the future as well.
+
+To handle this case for now, we are introducing a check to validate the *latest status* of the current cron event before scheduling any new ones.
+
+In parallel, we should work on identifying a more robust and graceful solution, keeping the following considerations in mind:
+
+* *Cron event* *data* should not be fetched.
+* *Cron events should not be modified externally* — all updates should go through the cron service itself.
+* The *executor* should be responsible for handling cancellation scenarios appropriately."
+Handle Cron event status race condition more gracefully,"In case where the status of an *in-progress* cron event is manually updated to *""cancelled""* in the database (through external factors), the ongoing execution of that event is not actually stopped. If the in-progress event is responsible for scheduling new events, those will continue to be created and executed in the future as well.
+
+To handle this case for now, we are introducing a check to validate the *latest status* of the current cron event before scheduling any new ones.
+
+In parallel, we should work on identifying a more robust and graceful solution, keeping the following considerations in mind:
+
+* *Cron event* *data* should not be fetched.
+* *Cron events should not be modified externally* — all updates should go through the cron service itself.
+* The *executor* should be responsible for handling cancellation scenarios appropriately."
+Lynks | Updating existing Lynks schema,"As per support given to display Lynks schema in node-red canvas (DL-60070)
+
+Need to update all existing data for the same.
+
+Refer Card solution for detail or reach out to [~accountid:5f589d0840e048006e0cc94a]/[~accountid:5f4ddee0333edb00432ffff9]"
+JWT TOKEN | Handling prod JWT Token,
+Clean card for DL-58474,"* Cleanup triggerMapping for Shopify, UPS & WooCommerce"
+masterConfig to be available in payload of enable/disable Hook,
+A write-up for workflow migration process,"Will need a write-up where any resource can refer to for Workflow migration standards and best practices.
+
+We already have a document for best practice, add a new section inside it - [https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/1415118991/Workflow+Creation+Best+Practices+Documentation|https://delivery-solutions.atlassian.net/wiki/spaces/standards/pages/1415118991/Workflow+Creation+Best+Practices+Documentation|smart-link] "
+Lynks | Migration Simplification,
+Lynks | Facilitate Type Validation framework in workflows,
+Discovery | Happy Returns Implementation,
+Assess & Create List of Integrated Lynks that can Support On-Demand Sync,"we need an assessment of, among all the Lynks that have been integrated so far on Lynkup, which all Lynks can on-demand sync work? This card will be prioritised accordingly if there are many Lynks that can support. "
+Review and Clean up the Cards,"All the cards should be reviewed and all the necessary information should be updated. example Requirement description, Feature/acceptance criteria etc. "
+Add the error in the callback URL being called for O-Auth Flow for lynks Framework ,"As per the {{Solution Call}} the error that is created in the {{shopify}} flow on workflow service needs to be propagated back to the framework through the call of the POST in the following 
+
+{noformat}/lynk-oauth-callback{noformat}
+
+the above call is currently already happening this is only for addition of the error so that t he same can be propagated back to the USER/PORTAL
+
+Same format as DS with a extra key connectLynkId
+
+{noformat}{
+    connectedLynkId: string;
+    type: string;
+    message: string;
+    errors?: Array<{
+      type: string;
+      message: string;
+    }>;
+}{noformat}
+
+{noformat}-----------------------
+{
+  connectedLynkId: ""dfhsdkjfhdskfj"",
+  ""errors"": [
+    {
+      ""type"": ""INVALID_DATA"",
+      ""message"": ""Some issue occured during the execution""
+    }
+  ],
+  ""type"": ""INVALID_DATA"",
+  ""message"": ""Check configuration and retry again.""
+}
+-----------------------
+{
+  ""connectedLynkId"": ""dfhsdkjfhdskfj"",
+  ""errors"": [
+    {
+      ""type"": ""UNAUTHORIZED"",
+      ""message"": ""Issue during the authentication flow while generating the redirection url.""
+    }
+  ],
+  ""type"": ""UNAUTHORIZED"",
+  ""message"": ""Contact support if you are not able to install this Lynk""
+}
+{noformat}"
+Shopify | Creation of store using internal URL throw Internal Server Error,"!image-20250501-175457.png|width=1078,height=214,alt=""image-20250501-175457.png""!
+
+Using internal URL for creating store is throw internal server error."
+PR Review : Fleet Microfrontend,"We are doing cleanup activity for duplicate routes and moving few apigateways routes to correct path  , please refer Tech solution: [https://delivery-solutions.atlassian.net/browse/DL-3969|https://delivery-solutions.atlassian.net/browse/DL-3969|smart-link]
+
+*Route update strategy for QA written in this subtask :*
+[https://delivery-solutions.atlassian.net/browse/DL-55502|https://delivery-solutions.atlassian.net/browse/DL-55502|smart-link]
+
+|fleet microfrontend|[https://bitbucket.org/deliverysolutions/fleet-microfrontend/pull-requests/224|https://bitbucket.org/deliverysolutions/fleet-microfrontend/pull-requests/224|smart-link]|"
+Replace extraConfig with masterConfig,"Currently webhooks and scope is in {{extraConfig}} in master & connected Lynk. Once [~accountid:5fbb476f7cc1030069505fe0] updates the master & connectedLynk for {{masterConfig}}, we will have to move webhooks and scope keys to masterConfig key.
+
+h2. Scope
+
+* Update workflow to use masterConfig than extraConfig.
+* Update migration to add webhook & scope to masterConfig in place of extraConfig
+* Update migration for adding workflows to master DB
+* Update the repository version to nr-executor & workflow service
+
+Update the mappings as per the table below:
+
+{adf:display=block}
+{""type"":""table"",""attrs"":{""isNumberColumnEnabled"":false,""layout"":""align-start"",""localId"":""2570cbee-e071-48a8-a786-6a08a320d381"",""width"":1019},""content"":[{""type"":""tableRow"",""content"":[{""type"":""tableHeader"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""key"",""marks"":[{""type"":""strong""}]}]}]},{""type"":""tableHeader"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""old"",""marks"":[{""type"":""strong""}]}]}]},{""type"":""tableHeader"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""name"",""marks"":[{""type"":""strong""}]}]}]}]},{""type"":""tableRow"",""content"":[{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""scope""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""extraConfig.scope""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""masterConfig.scope""}]}]}]},{""type"":""tableRow"",""content"":[{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""webhooks""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""extraConfig.webhooks""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""masterConfig.webhooks""}]}]}]},{""type"":""tableRow"",""content"":[{""type"":""tableCell"",""attrs"":{""colspan"":3,""background"":""#f4f5f7""},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""While saving and updates"",""marks"":[{""type"":""strong""}]}]}]}]},{""type"":""tableRow"",""content"":[{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""webhooks""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""extraConfig.clientId""}]}]},{""type"":""tableCell"",""attrs"":{},""content"":[{""type"":""paragraph"",""content"":[{""type"":""text"",""text"":""extraConfig.clientId""}]}]}]}]}
+{adf}"
+Remove shopifyConfig from Master Configuration Entity,"h1. Scope
+
+* Write a migration to remove the temporary Shopify Configuration data from the master configuration collection
+* Remove the optional key {{shopifyConfig}} from the Master Configuration Repository"
+Update data model changes once framework level changes are done,"Update the Shopify flow with updated framework data models which is implemented in [https://delivery-solutions.atlassian.net/browse/DL-46345|https://delivery-solutions.atlassian.net/browse/DL-46345|smart-link] 
+
+Replace with master configuration repository to connectedLynk repository.
+
+Update the following mapping
+
+||*key*||*old*||*name*||
+|scope|config.scope|extraConfig.scope|
+|webhooks|config.webhooks|extraConfig.webhooks|
+|clientId|config.clientId|configuration.clientId|
+|clientSecret|config.clientSecret|configuration.clientSecret|
+|storeName|config.storeName|extraConfig.storeName|
+|token|config.token|credentials.token|"
+Create video demo for unassigned routes,"h2. Create video for following cases
+
+* 1 driver linked to 1 vehicle
+* multiple ( 1+ ) drivers linked to 1 vehicle 
+* no drivers linked to 1 vehicle ( 1 driver in OU )
+** no drivers linked to 1 vehicle ( 1 driver in OU & slots configured for route time )
+* no drivers linked to 1 vehicle ( multiple drivers in OU )
+** no drivers linked to 1 vehicle ( multiple drivers in OU & slots configured for route time )
+
+
+
+
+
+
+
+* no drivers linked to 1 vehicle ( 1 driver in OU ) 
+*Result* : In case 1 driver and 1 vehicle is present in OU and they are not linked together i.e. vehicle is not assigned to the driver, Route plan automatically assigns the route to the same vehicle and auto assigns singular driver as well
+!Screen Recording 2025-01-06 at 1.26.10 PM.mov|width=2830,height=1644,alt=""Screen Recording 2025-01-06 at 1.26.10 PM.mov""!
+
+* no drivers linked to 1 vehicle ( 1 driver in OU & slots configured for route time )
+*Result* : If we use slot for singular vehcile as well the results remain same as for, no drivers linked to 1 vehicle ( 1 driver in OU ) 
+!Screen Recording 2025-01-06 at 1.37.18 PM (4a09eb3e-af39-428f-83ca-d2c14e705e13).mov|width=2830,height=1644,alt=""Screen Recording 2025-01-06 at 1.37.18 PM.mov""!
+
+* 1 driver linked to 1 vehicle
+*Result* : In case 1 driver and 1 vehicle is present in OU and they are linked together i.e. vehicle is assigned to the driver. Route gets assigned to the same driver and vehicle.
+!Screen Recording 2025-01-06 at 1.46.23 PM.mov|width=2830,height=1644,alt=""Screen Recording 2025-01-06 at 1.46.23 PM.mov""!
+
+* multiple ( 1+ ) drivers linked to 1 vehicle 
+*Result* : In case multiple drivers are linked to 1 vehicle in this case route that gets generated, will have driver unassigned and user can choose driver from the dropdown.
+!Screen Recording 2025-01-06 at 2.29.12 PM.mov|width=2830,height=1644,alt=""Screen Recording 2025-01-06 at 2.29.12 PM.mov""!
+
+* no drivers linked to 1 vehicle ( multiple drivers in OU )
+*Result* : In case multiple drivers and multiple vehicles are present and all the drivers are having no vehcile unassigned to them, route will get generated. according to number of vehicles present in the OU, and user can choose which driver they want to assign in the route plan.
+!Screen Recording 2025-01-06 at 2.42.43 PM.mov|width=2830,height=1644,alt=""Screen Recording 2025-01-06 at 2.42.43 PM.mov""!
+
+
+
+* no drivers linked to 1 vehicle ( multiple drivers in OU & slots configured for route time )
+*Result* : Similar case as done in case: no drivers linked to 1 vehicle ( multiple drivers in OU )
+!Screen Recording 2025-01-06 at 2.50.28 PM.mov|width=2878,height=1644,alt=""Screen Recording 2025-01-06 at 2.50.28 PM.mov""!"
+Code review Driver service - DL-45119,Hey [~accountid:61cb1cd97aa7ac0070cd3e7b] Please review dev pr - [https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/667|https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/667|smart-link] for card - DL-45119
+POC- Status Updates in Shopify from Lynkup,"h2. Background
+
+As a merchant, I would like for all Shopify orders present in Lynkup, when there are significant updates/events like order has shipped, update tracking info, or delivered, cancelled, etc., the change should be reflected in Shopify as well, so that both Shopify & Lynkup are in sync.
+
+Shopify offers the Fulfillment API to receive such updates.
+
+Scope of this POC task is to analyse this API, understand the status update flow of Shopify, identify what events from Lynkup we can send updates for and how they can be sent & what details can be sent along with it.
+
+h2. Results of POC
+
+[https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/1281196287/Status+Update+Flow|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/1281196287/Status+Update+Flow|smart-link] "
+For end task creation  in a route using script,"* What will be the trigger for this script? Cron Job - Mongo trigger , frequency of the script 
+* When to create a end task in route? Route created for Onfleet , Tenant specific "
+Analysis - Require On-Time Delivery functionality for all Optimization Goal selections,"
+
+!image-20240828-195406.png|width=1515,height=795,alt=""image-20240828-195406.png""!
+
+
+
+!image-20240828-195444.png|width=1689,height=1032,alt=""image-20240828-195444.png""!"
+Bad Data | Write a migration to fix vehicle ID bad data in Prod test accounts,"Migration for fixing the bad data
+
+{noformat}S105_dl_44037_fix_vehicle_id_bad_data{noformat}"
+Vehicle ID | string vehicle ID bad data in the database,
+Analysis for Order Preference TW use case related to DL-42024,
+Routing Service | Change the value for  estimatedDepartureTime key of the last stop in a route,"The max time for last stop is so big that the value for key {{estimatedDepartureTime}} is so far ahead in future.
+
+!image-20240728-220857.png|width=715,height=201,alt=""image-20240728-220857.png""!"
+To verify the threshold of minimum cost for route generation,"* {{29.93594}},{{-95.255}} and {{29.9276}},{{-95.5506}}"
+Code review from Fleet team,
+Code Review from Private Fleet Team for DL-34770,Code Review from Private Fleet Team for DL-34770
+Code Review from Private Fleet Team for DL-14587,"Code Review from Private Fleet Team for [https://delivery-solutions.atlassian.net/browse/DL-14587|https://delivery-solutions.atlassian.net/browse/DL-14587|smart-link]
+
+[https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/553|https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/553|smart-link] 
+
+[https://bitbucket.org/deliverysolutions/fleet-routing-service/pull-requests/417|https://bitbucket.org/deliverysolutions/fleet-routing-service/pull-requests/417|smart-link] "
+Code Review from Private Fleet Team for DL-37974,"Code Review from Private Fleet Team for [https://delivery-solutions.atlassian.net/browse/DL-37974|https://delivery-solutions.atlassian.net/browse/DL-37974|smart-link].
+
+Driver Service: [https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/620|https://bitbucket.org/deliverysolutions/drivers-service/pull-requests/620] 
+API MS: [https://bitbucket.org/deliverysolutions/api.deliverysolutions/pull-requests/15734|https://bitbucket.org/deliverysolutions/api.deliverysolutions/pull-requests/15734]  
+
+Fleet Routing service pr: [https://bitbucket.org/deliverysolutions/fleet-routing-service/pull-requests/480/overview|https://bitbucket.org/deliverysolutions/fleet-routing-service/pull-requests/480/overview]  
+
+APP MS - [https://bitbucket.org/deliverysolutions/app.deliverysolutions/pull-requests/11884|https://bitbucket.org/deliverysolutions/app.deliverysolutions/pull-requests/11884]  
+
+Store hierarchy - [https://bitbucket.org/deliverysolutions/store-hierarchy/pull-requests/368/diff|https://bitbucket.org/deliverysolutions/store-hierarchy/pull-requests/368/diff] "
+Analyse the impact of SetGlobalSpanCostCoefficient for route generation,"The route is not generated for coordinates
+
+{{28.86569,-103.55386}} AND {{31.29873,-103.14208}}
+
+
+
+The route is generated when the SetGlobalSpanCostCoefficient value is changed from 100 to less than 10.
+
+Reference: [https://stackoverflow.com/questions/58265400/how-to-set-setglobalspancostcoefficient-and-the-capacity-parameter-in-adddimensi|https://stackoverflow.com/questions/58265400/how-to-set-setglobalspancostcoefficient-and-the-capacity-parameter-in-adddimensi|smart-link] "
+Review for Dev/QA PR for DL-36032,
+Training module for Fleet and RO components,"# To provide Fleet Route optimization training to support team
+# Record the training for future onboarding or knowledge transfer."
+Order History - Route Plan Bug,"*_This is an escalation to L3 from L2 since we don’t have KT related to  this module_*
+
+*Source:* [~accountid:62f0d09d96eb272011a97a42] 
+ 
+*Issue:* Route Plans will not populate because the estimates are not going through correctly.
+ 
+*Environment:* Sandbox
+ 
+*Priority:* High. Route Plans is a new feature and the Support team has articles that are stacking up because they can't work on them until estimates work and route plans can populate. 
+ 
+*Steps to recreate the issue:*
+
+# Upbound is the SB Eric has been using
+# Go to Orders page - History tab
+# Filter Orders to include the last 7 days (see orders [L1-Test865738989|https://sandbox.portal.deliverysolutions.co/#/deliveries/status/orders/order_details/66477d025954dc5a67b12101] and [123456789|https://sandbox.portal.deliverysolutions.co/#/deliveries/status/orders/order_details/66477e30190f53fed01ada7e]. These orders were set up correctly for Route Plan.)
+# Now click filter and scroll down to the bottom. Click the Route Optimisation Eligible button so that it shows a check.
+# Notice these orders do not show up.
+
+*Create a new order:*
+
+# Go to Orders page - History tab
+# Create an order for Store: DALLAS-75254 [0001]
+# Use the following pick up address
+
+{noformat}14215 South Coit Road 
+Dallas, TX 75254 
+US{noformat}
+
+* Use the following dropoff  address
+
+{noformat}14210 South Coit Road 
+Dallas, TX 75254 
+US{noformat}
+
+# scroll down and click Estimates 
+What we see is ""RAC Fleet doesn't provide estimates"" which is a necessary component to assigning to Route Plan.
+
+!_name=image.png|width=1644,height=693!"
+PR Review for DL-34912,
+Add return type in dbconnection library for getFleetDbConnection,Feedback on production release from optimization team to add a return type on the getFleetDbConnection function in dbconnection library.
+R&D | Utilize order event queue for route status processing - Real time route monitoring,"We can utilize the order events queue to process the route statuses.
+
+To do research on it and check its feasibility, we can use this card to track it.
+
+Objective:
+
+# utilize the order events queue to process the route statuses - tech solution
+# Real time route monitoring - show demo with static page.
+
+h1. "
+Technical Documentation,
+DL-23565 code review from Integration,
+"NextMV - Local setup for development, API impact assessment and documentation","# Local setup for development work - [https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Nextmv-CLI-&-SDK|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Nextmv-CLI-&-SDK|smart-link] 
+# NextMV API document assessment - [https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Inputs-&-Outputs|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Inputs-&-Outputs|smart-link] 
+# Field Mapping - [https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Input|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Input|smart-link] 
+# Documentation - [https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup|smart-link] 
+# Postman - [https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Postman|https://delivery-solutions.atlassian.net/wiki/spaces/~555225608/pages/769425733/NextMV+Local+Setup#Postman|smart-link] "
